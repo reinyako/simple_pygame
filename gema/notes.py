@@ -31,11 +31,14 @@ ENDING_LINES = [
 
 DEATH_WORDS = ["Belum.", "Lagi.", "Bangun."]
 
+# (teks, ukuran font, terang?)
 CREDITS = [
-    "GEMA",
-    "",
-    "dibuat dengan pygame-ce dan numpy",
-    "tanpa satu pun file gambar atau suara",
+    ("GEMA", 30, True),
+    ("", 10, False),
+    ("oleh v.obscura", 18, True),
+    ("", 10, False),
+    ("dibuat dengan pygame-ce dan numpy", 15, False),
+    ("tanpa satu pun file gambar atau suara", 15, False),
 ]
 
 CONTROLS = [

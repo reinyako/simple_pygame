@@ -1,5 +1,7 @@
 # GEMA
 
+*oleh v.obscura*
+
 Game horor psikologis top-down yang dibuat dengan pygame. Di labirin yang gelap total, melihat berarti terdengar.
 
 Kamu terbangun di labirin gelap dengan senter tua dan alat sonar. Sonar memperlihatkan jalan, tapi makhluk di sana berburu dengan telinga. Kumpulkan tiga fragmen di setiap lantai, lalu temukan pintu keluar.

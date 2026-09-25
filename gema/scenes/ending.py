@@ -87,8 +87,7 @@ class EndingScene:
             draw_center(screen, text, font(22), C.COL_TEXT, cx, C.SCREEN_H / 2 - 12, page_alpha(self.stage_t, 2.5))
         elif self.stage == 2:
             a = page_alpha(self.stage_t, 4.0)
-            y = C.SCREEN_H / 2 - 50
-            for i, line in enumerate(notes.CREDITS):
-                size = 30 if i == 0 else 15
-                color = C.COL_TEXT if i == 0 else C.COL_TEXT_DIM
-                y += draw_center(screen, line, font(size), color, cx, y, a) + 6
+            y = C.SCREEN_H / 2 - 70
+            for text, size, bright in notes.CREDITS:
+                color = C.COL_TEXT if bright else C.COL_TEXT_DIM
+                y += draw_center(screen, text, font(size), color, cx, y, a) + 6

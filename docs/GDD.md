@@ -416,7 +416,7 @@ Setelah pemain masuk pintu di lantai terakhir, layar menjadi hitam dan tulisan m
 >
 > *Bagus.*
 
-Setelah jeda, muncul *"Percobaan ke-{n+1}."*, lalu kredit singkat, lalu layar judul. Kalimat di ending ini sama persis dengan catatan #1, jadi loop-nya tertutup.
+Setelah jeda, muncul *"Percobaan ke-{n+1}."*, lalu kredit singkat (*GEMA, oleh v.obscura*), lalu layar judul. Kalimat di ending ini sama persis dengan catatan #1, jadi loop-nya tertutup.
 
 ### 10.7 Layar judul dinamis
 
@@ -539,6 +539,6 @@ Kalau file rusak, game diam-diam mulai dari awal lagi tanpa crash.
 
 ## 16. Hal yang masih terbuka
 
-- **Nama di kredit.** Tulis apa dan siapa?
+- ~~**Nama di kredit.**~~ Sudah diputuskan: *v.obscura*.
 - **Mengulang dari Lantai 1 saat nyawa habis.** Ini cukup kejam, terutama di Pekat. Kita pertahankan dulu, lalu dievaluasi saat playtest.
 - **Semua angka di dokumen ini** akan disetel setelah playtest pertama (lihat checklist di `docs/PLAN.md`).
