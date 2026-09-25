@@ -190,7 +190,7 @@ Stres adalah meter 0–100 yang **tidak pernah ditampilkan**. Pemain hanya meras
 
 | Penyebab | Jumlah |
 |---|---|
-| Ada Pendengar dalam 150 px | Sampai +12/dtk (makin dekat, makin besar) |
+| Ada Pendengar dalam 150 px | Sampai +8/dtk (makin dekat, makin besar) |
 | Gelap terlalu lama (senter mati dan sonar terakhir lebih dari 8 detik lalu) | +0,8/dtk |
 | Menatap Pengamat | +8/dtk |
 | Mendengar ping peniru | +10 |
@@ -201,7 +201,7 @@ Stres adalah meter 0–100 yang **tidak pernah ditampilkan**. Pemain hanya meras
 
 | Penyebab | Jumlah |
 |---|---|
-| Aman (tidak ada Pendengar dalam 250 px, dan senter menyala atau sonar dipakai dalam 8 detik terakhir) | −1,5/dtk |
+| Aman (tidak ada Pendengar dalam 250 px, dan senter menyala atau sonar dipakai dalam 8 detik terakhir) | −3/dtk |
 | Mengambil fragmen | −15 |
 | Masuk lantai baru | Kembali ke batas bawah |
 
@@ -222,7 +222,7 @@ Akibatnya, informasi membuat pemain lebih tenang tapi ada harganya. Pemain yang 
 
 ### 6.2 Detak jantung
 
-- Kecepatan detak jantung (60–150 BPM) dan volumenya mengikuti nilai **bahaya**, yaitu yang lebih besar antara kedekatan monster terdekat (dihitung dalam 300 px) dan stres × 0,6.
+- Kecepatan detak jantung (60–150 BPM) dan volumenya mengikuti nilai **bahaya**, yaitu yang lebih besar antara kedekatan monster terdekat (dihitung dalam 240 px) dan stres × 0,4.
 - Detak jantung mulai terdengar saat bahaya di atas 0,2.
 - Detak jantung **sengaja mono**, tidak stereo. Pemain tahu bahaya sudah dekat, tapi tidak tahu dari arah mana.
 

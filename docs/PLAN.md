@@ -155,57 +155,57 @@ simple_pygame/
 ## 4. Milestone & tugas
 
 ### M0 — Fondasi
-- [ ] Struktur folder, `requirements.txt`, `.gitignore`, `main.py`
-- [ ] `config.py` dengan konstanta, preset kesulitan, dan aturan per lantai
-- [ ] `app.py`: jendela 960×540 `SCALED`, loop 60 FPS, pergantian scene, `F11`
-- [ ] Argumen CLI: `--seed`, `--floor`, `--difficulty`, `--debug`, `--mute`
-- [ ] Test harness headless (`SDL_VIDEODRIVER=dummy`, `SDL_AUDIODRIVER=dummy`) + pytest
+- [x] Struktur folder, `requirements.txt`, `.gitignore`, `main.py`
+- [x] `config.py` dengan konstanta, preset kesulitan, dan aturan per lantai
+- [x] `app.py`: jendela 960×540 `SCALED`, loop 60 FPS, pergantian scene, `F11`
+- [x] Argumen CLI: `--seed`, `--floor`, `--difficulty`, `--debug`, `--mute`
+- [x] Test harness headless (`SDL_VIDEODRIVER=dummy`, `SDL_AUDIODRIVER=dummy`) + pytest
 
 **Selesai kalau:** `python main.py` membuka layar judul sementara, dan `pytest` hijau.
 
 ### M1 — Inti (bisa dimainkan)
-- [ ] `maze.py`: recursive backtracker, braiding, ruangan, penempatan semua objek, BFS
-- [ ] `raycast.py`: cast DDA + line-of-sight
-- [ ] Player: gerak, tabrakan, lari, bidik, suara langkah
-- [ ] NoiseBus
-- [ ] Sonar: gelombang, 360 sinar, titik gema, jejak ingatan, tanda objek (tajam atau buram), jeda
-- [ ] Senter: kerucut, gradasi, baterai, jangkauan menyusut, kedipan, efek beku
-- [ ] Pendengar: state machine lengkap, BFS, mematikan saat menyentuh
-- [ ] Fragmen, baterai, dan pintu keluar (terkunci lalu terbuka, masih versi dasar)
-- [ ] Alur lantai: intro lantai, pindah lantai, nyawa, muncul lagi, akhir percobaan
-- [ ] Layar pilih kesulitan + penerapan preset
-- [ ] Render: komposisi peta cahaya, siluet Pendengar, vignette dasar
-- [ ] Audio v1: ping, langkah, dengung fragmen (posisional), detak jantung (kedekatan), dengung latar
-- [ ] Overlay debug `F3`: seluruh peta, state monster, stres, baterai, FPS
-- [ ] Test: labirin (terhubung, ukuran, penempatan), raycast, pathfinding, smoke bot
+- [x] `maze.py`: recursive backtracker, braiding, ruangan, penempatan semua objek, BFS
+- [x] `raycast.py`: cast DDA + line-of-sight
+- [x] Player: gerak, tabrakan, lari, bidik, suara langkah
+- [x] NoiseBus
+- [x] Sonar: gelombang, 360 sinar, titik gema, jejak ingatan, tanda objek (tajam atau buram), jeda
+- [x] Senter: kerucut, gradasi, baterai, jangkauan menyusut, kedipan, efek beku
+- [x] Pendengar: state machine lengkap, BFS, mematikan saat menyentuh
+- [x] Fragmen, baterai, dan pintu keluar (terkunci lalu terbuka, masih versi dasar)
+- [x] Alur lantai: intro lantai, pindah lantai, nyawa, muncul lagi, akhir percobaan
+- [x] Layar pilih kesulitan + penerapan preset
+- [x] Render: komposisi peta cahaya, siluet Pendengar, vignette dasar
+- [x] Audio v1: ping, langkah, dengung fragmen (posisional), detak jantung (kedekatan), dengung latar
+- [x] Overlay debug `F3`: seluruh peta, state monster, stres, baterai, FPS
+- [x] Test: labirin (terhubung, ukuran, penempatan), raycast, pathfinding, smoke bot
 
 **Selesai kalau:** game bisa dimainkan dari judul sampai Lantai 5 selesai atau sampai nyawa habis, bot headless 3 menit per lantai tidak crash, dan screenshot sudah aku review.
 
 ### M2 — Lapisan horor
-- [ ] Meter stres beserta semua aturan naik/turun dan batas bawah
-- [ ] Efek stres: vignette dinamis, detak jantung, jejak ingatan berkedip, bisikan, crossfade dengung sumbang, goyangan kamera
-- [ ] Director dengan jarak minimal antar kejadian besar dan jeda setelah momen puncak
-- [ ] Gema palsu dan gema hilang, termasuk semua aturan keadilan
-- [ ] Pengamat: muncul di belakang, jarak nyaman, berhenti saat diamati, pergi setelah disorot 2 detik, napas peringatan, bentuk sama seperti pemain
-- [ ] Labirin bergeser: tanpa pengamatan, keterhubungan terjaga, bunyi gesekan, update dunia asli tanpa mengubah ingatan
-- [ ] Ping peniru: ping sumbang, lingkaran samar, masuk NoiseBus
-- [ ] Bayangan palsu di tepi kerucut senter
-- [ ] Pintu terbuka: hening 6 detik, Pendengar gelisah, dengung pintu, celah cahaya
-- [ ] Pengenalan elemen per lantai sesuai tabel §8.2 GDD
-- [ ] Test: keterhubungan setelah 1000 kali geser acak, batasan gema palsu, transisi state Pengamat
+- [x] Meter stres beserta semua aturan naik/turun dan batas bawah
+- [x] Efek stres: vignette dinamis, detak jantung, jejak ingatan berkedip, bisikan, crossfade dengung sumbang, goyangan kamera
+- [x] Director dengan jarak minimal antar kejadian besar dan jeda setelah momen puncak
+- [x] Gema palsu dan gema hilang, termasuk semua aturan keadilan
+- [x] Pengamat: muncul di belakang, jarak nyaman, berhenti saat diamati, pergi setelah disorot 2 detik, napas peringatan, bentuk sama seperti pemain
+- [x] Labirin bergeser: tanpa pengamatan, keterhubungan terjaga, bunyi gesekan, update dunia asli tanpa mengubah ingatan
+- [x] Ping peniru: ping sumbang, lingkaran samar, masuk NoiseBus
+- [x] Bayangan palsu di tepi kerucut senter
+- [x] Pintu terbuka: hening 6 detik, Pendengar gelisah, dengung pintu, celah cahaya
+- [x] Pengenalan elemen per lantai sesuai tabel §8.2 GDD
+- [x] Test: keterhubungan setelah 1000 kali geser acak, batasan gema palsu, transisi state Pengamat
 
 **Selesai kalau:** setiap elemen muncul di lantai yang benar, bot test hijau, dan screenshot di stres 0, 50, dan 90 sudah aku review.
 
 ### M3 — Cerita & polish
-- [ ] `notes.py`: 15 catatan, varian dinamis, pengisian `{n}`
-- [ ] Tampilan catatan dengan efek mesin ketik, plus daftar catatan di menu jeda
-- [ ] `save.py`: tahan terhadap file rusak
-- [ ] Layar judul: tombol dinamis, judul bergaya titik sonar, saran memakai earphone
-- [ ] Urutan kematian (hening, bunyi tumpul, teks acak) dan akhir percobaan
-- [ ] Lantai terakhir + ending + kredit
-- [ ] Audio lengkap sesuai tabel §12 GDD + cek batas kekerasan suara
-- [ ] Polish: grain, transisi fade
-- [ ] README final: cara pasang, cara main, kontrol, tombol debug
+- [x] `notes.py`: 15 catatan, varian dinamis, pengisian `{n}`
+- [x] Tampilan catatan dengan efek mesin ketik, plus daftar catatan di menu jeda
+- [x] `save.py`: tahan terhadap file rusak
+- [x] Layar judul: tombol dinamis, judul bergaya titik sonar, saran memakai earphone
+- [x] Urutan kematian (hening, bunyi tumpul, teks acak) dan akhir percobaan
+- [x] Lantai terakhir + ending + kredit
+- [x] Audio lengkap sesuai tabel §12 GDD + cek batas kekerasan suara
+- [x] Polish: grain, transisi fade
+- [x] README final: cara pasang, cara main, kontrol, tombol debug
 
 **Selesai kalau:** satu run penuh sampai ending bisa diselesaikan (dicek pakai lompatan lantai debug), semua teks berbahasa Indonesia, dan tidak ada crash.
 

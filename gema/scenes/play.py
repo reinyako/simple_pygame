@@ -196,7 +196,7 @@ class PlayScene:
 
         if self.note is not None:
             self.note.draw(screen, C.SCREEN_W / 2, C.SCREEN_H - 96)
-        if self.hint > 0:
+        if self.hint > 0 and not self.paused:
             self._draw_hint(screen, min(1.0, self.hint / 2.0) * min(1.0, (9.0 - self.hint) / 1.5))
         if not self.paused and self.state == PLAYING:
             mx, my = pygame.mouse.get_pos()

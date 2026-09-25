@@ -100,7 +100,7 @@ WATCHER_SONAR_OBSERVE = 0.5
 
 # --- Stres ---------------------------------------------------------------
 STRESS_NEAR_RANGE = 150.0
-STRESS_NEAR_RATE = 12.0
+STRESS_NEAR_RATE = 8.0
 STRESS_DARK_DELAY = 8.0
 STRESS_DARK_RATE = 0.8
 STRESS_STARE_RATE = 8.0
@@ -108,17 +108,17 @@ STRESS_MIMIC = 10.0
 STRESS_SHIFT = 3.0
 STRESS_DEATH = 20.0
 STRESS_SAFE_RANGE = 250.0
-STRESS_SAFE_RATE = 1.5
+STRESS_SAFE_RATE = 3.0
 STRESS_FRAGMENT = -15.0
 STRESS_FLOOR_PER_DEATH = 10.0
 STRESS_FLOOR_MAX = 40.0
 
 # --- Detak jantung -------------------------------------------------------
-HEART_RANGE = 300.0
+HEART_RANGE = 240.0
 HEART_MIN_BPM = 60.0
 HEART_MAX_BPM = 150.0
 HEART_THRESHOLD = 0.2
-HEART_STRESS_WEIGHT = 0.6
+HEART_STRESS_WEIGHT = 0.4
 
 # --- Trik persepsi & director --------------------------------------------
 FALSE_ECHO_PER_PING = 2.0
