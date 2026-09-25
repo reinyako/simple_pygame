@@ -85,6 +85,20 @@ class TitleScene:
         draw_center(screen, "Gunakan earphone.", font(14), C.COL_TEXT_DIM, C.SCREEN_W / 2, C.SCREEN_H - 40)
         self.app.effects.grain(screen, self.t)
         self.app.effects.vignette(screen, 0)
+        self._draw_signature(screen, radius)
+
+    def _draw_signature(self, screen, radius):
+        """Nama pembuat di pojok kanan bawah. Samar, dan ikut menyala sesaat saat gelombang lewat."""
+        fnt = font(13)
+        w, h = fnt.size("v.obscura")
+        x = C.SCREEN_W - w - 18
+        y = C.SCREEN_H - h - 16
+        d = math.hypot(x + w / 2 - self.origin[0], y - self.origin[1])
+        since = (radius - d) / RING_SPEED
+        if since < 0:
+            since += RING_PERIOD
+        k = 0.3 + 0.35 * math.exp(-since * 1.5)
+        screen.blit(fnt.render("v.obscura", True, scale(C.COL_TEXT, k)), (x, y))
 
 
 class DifficultyScene:
