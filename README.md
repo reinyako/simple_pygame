@@ -43,14 +43,33 @@ python main.py
 
 ## Untuk playtest dan debug
 
+### Mode dev
+
+```bash
+python main.py --dev
+```
+
+Muncul menu **Mode dev** di layar judul dan di menu jeda (`Esc`). Pilihannya bisa dinyalakan atau dimatikan kapan saja, termasuk di tengah permainan:
+
+| Pilihan | Efek |
+|---|---|
+| Kebal | Tidak bisa mati. Kalau tersentuh monster, efek tertangkap (getar, merah, makhluknya terlihat) tetap muncul supaya bisa dites. |
+| Sonar tanpa jeda | Sonar bisa dipakai terus-menerus |
+| Senter tanpa batas | Baterai selalu penuh |
+
+Selama ada pilihan yang menyala, pojok kanan atas layar menampilkan tulisan kecil `DEV`, supaya kamu tidak lupa sedang main dalam mode dev. Di mode dev juga ada tombol `F5` (ambil semua fragmen lantai ini) dan `F6` (lompat ke pintu keluar).
+
+### Opsi lain
+
 | Opsi | Kegunaan |
 |---|---|
 | `python main.py --floor 4` | Langsung mulai dari Lantai 4 |
 | `python main.py --seed 123` | Labirin yang sama setiap kali (sertakan seed saat melaporkan bug) |
 | `python main.py --difficulty pekat` | Pilihan awal di layar kesulitan |
 | `python main.py --mute` | Tanpa suara |
-| `python main.py --debug` | Mengaktifkan `F5` (ambil semua fragmen) dan `F6` (lompat ke pintu keluar) |
 | `F3` saat bermain | Overlay debug: peta, status monster, stres, baterai, FPS |
+
+Opsi-opsi ini bisa digabung, misalnya `python main.py --dev --floor 5`.
 
 Data simpanan (jumlah percobaan, kematian, ending) ada di `~/.gema/save.json`. Hapus file itu untuk mulai dari nol.
 

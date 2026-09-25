@@ -141,9 +141,17 @@ SHIFT_MIN_DIST = 160.0
 SHIFT_SONAR_WINDOW = 3.0
 MIMIC_RANDOM_DIST = (250.0, 350.0)
 
-# --- Transisi ------------------------------------------------------------
-DEATH_FADE = 0.6
+# --- Transisi & tertangkap -----------------------------------------------
+HIT_STOP = 0.9          # waktu berhenti + getar + makhluk terlihat, sebelum fade
+DEATH_FADE = 0.8
+DEATH_BLACK = 0.6
+LAST_HEARTBEAT = 0.35   # satu detak terakhir, lalu jantung diam
 EXIT_FADE = 1.0
+SHAKE_MAX = 10.0        # piksel
+SHAKE_DECAY = 1.6       # trauma berkurang per detik
+SHAKE_DEATH = 1.0
+SHAKE_GOD_HIT = 0.55    # mode kebal: efek tetap muncul, tapi tidak mati
+GOD_HIT_COOLDOWN = 1.2
 
 # --- Volume (0..1). Aturan: efek suara tidak lebih dari ±2x dengung latar.
 VOLUME = {
@@ -165,7 +173,7 @@ VOLUME = {
     "door": 0.5,
     "grind": 0.3,
     "whisper": 0.2,
-    "thud": 0.45,
+    "impact": 0.5,
     "exhale": 0.35,
     "title_ping": 0.2,
 }

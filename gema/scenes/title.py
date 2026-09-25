@@ -22,7 +22,8 @@ class TitleScene:
         self.ring_t = RING_PERIOD - 0.8
         self.origin = (C.SCREEN_W / 2, 175)
         self.points = self._letter_points("GEMA")
-        self.menu = Menu([notes.start_label(app.save), "Keluar"], y=330)
+        items = [notes.start_label(app.save)] + (["Mode dev"] if app.dev.enabled else []) + ["Keluar"]
+        self.menu = Menu(items, y=330 if len(items) == 2 else 316)
 
     def _letter_points(self, text):
         img = font(118, bold=True).render(text, True, (255, 255, 255))
@@ -43,11 +44,21 @@ class TitleScene:
         self.app.audio.stop_all()
 
     def handle_event(self, ev):
-        choice = self.menu.handle_event(ev)
-        if choice == 0:
-            self.app.switch(DifficultyScene(self.app))
-        elif choice == 1 or (ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE):
+        if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
             self.app.running = False
+            return
+        choice = self.menu.handle_event(ev)
+        if choice is None:
+            return
+        label = self.menu.items[choice]
+        if label == "Keluar":
+            self.app.running = False
+        elif label == "Mode dev":
+            from .dev import DevScene
+
+            self.app.switch(DevScene(self.app))
+        else:
+            self.app.switch(DifficultyScene(self.app))
 
     def update(self, dt):
         self.t += dt

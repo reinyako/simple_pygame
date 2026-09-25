@@ -169,12 +169,13 @@ Baterai cadangan tersebar di jalan buntu yang tersisa. Jumlahnya per lantai terg
 ### 5.8 Nyawa dan kematian
 
 - Pemain kehilangan satu nyawa kalau disentuh Pendengar atau Pengamat.
-- **Urutan kematian** dibuat tanpa jumpscare:
-  1. Semua suara langsung hilang.
-  2. Layar memudar ke hitam dalam 0,6 detik.
-  3. Terdengar satu bunyi tumpul yang pelan.
-  4. Muncul tulisan kecil secara acak: *"Belum."*, *"Lagi."*, atau *"Bangun."*
-  5. Pemain muncul lagi di pintu masuk lantai yang sama.
+- **Urutan kematian** dibuat jelas tapi tanpa jumpscare:
+  1. **Waktu berhenti** ±0,9 detik. Dunia diam, dan layar bergetar lalu mereda.
+  2. **Makhluk yang menangkap terlihat**, walaupun ada di kegelapan. Pendengar tampil sebagai siluet berpinggiran merah dengan cahaya merah redup. Pengamat tampil sebagai sosok yang sama persis dengan pemain, bersentuhan dengan pemain.
+  3. Semua suara hilang, lalu terdengar satu hantaman tumpul dan **satu detak jantung terakhir**. Setelah itu jantung diam.
+  4. Pinggiran layar berdenyut merah lalu memudar.
+  5. Layar memudar ke hitam, lalu muncul tulisan kecil secara acak: *"Belum."*, *"Lagi."*, atau *"Bangun."*
+  6. Pemain muncul lagi di pintu masuk lantai yang sama.
 - Setelah mati, fragmen yang sudah diambil tetap tersimpan, dan monster dipindahkan jauh dari pintu masuk. Stres tidak kembali ke nol (§6.1).
 - Kalau nyawa habis, muncul tulisan *"Percobaan ke-N berakhir."* lalu game kembali ke layar judul.
 
@@ -480,7 +481,7 @@ Semua suara dibuat dengan numpy saat game dimulai.
 | Ambil baterai / senter | Klik | |
 | Dinding bergeser | Gesekan batu yang sangat pelan dari kejauhan | Stereo |
 | Bisikan | Desis dengan warna suara orang | Kiri atau kanan secara acak |
-| Kematian | Semua suara hilang, lalu satu dentum teredam | |
+| Tertangkap | Semua suara hilang, satu hantaman tumpul, lalu satu detak jantung terakhir | |
 
 **Prinsip audio:**
 - **Batas kekerasan suara.** Tidak ada efek suara yang lebih dari ±2× kerasnya dengung latar. Ini menjaga aturan tanpa jumpscare.

@@ -167,11 +167,12 @@ def whisper(sr, rng):
     return _norm((breathy + formant) * env, 0.8)
 
 
-def thud(sr, rng):
-    t = _t(sr, 1.2)
-    x = np.sin(2 * np.pi * 45 * t) * np.exp(-t * 5) * _attack(t, 0.01)
-    x += _band_noise(len(t), rng, sr, hi=150) * np.exp(-t * 8) * 0.5
-    return _norm(x, 0.85)
+def impact(sr, rng):
+    """Hantaman tumpul saat tertangkap: nada rendah yang cepat turun, ditambah remuk pendek."""
+    t = _t(sr, 1.0)
+    body = np.sin(2 * np.pi * 50 * t + 3.0 * np.exp(-t * 25)) * np.exp(-t * 6) * _attack(t, 0.003)
+    crunch = _band_noise(len(t), rng, sr, lo=80, hi=900) * np.exp(-t * 20) * 0.6
+    return _norm(body + crunch, 0.9)
 
 
 def exhale(sr, rng):
@@ -203,6 +204,6 @@ def build_all(sr, seed=7):
         "battery": battery(sr, rng),
         "grind": grind(sr, rng),
         "whisper": [whisper(sr, rng) for _ in range(3)],
-        "thud": thud(sr, rng),
+        "impact": impact(sr, rng),
         "exhale": exhale(sr, rng),
     }

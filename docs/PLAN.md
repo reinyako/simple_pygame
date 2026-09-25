@@ -45,7 +45,7 @@ Kesimpulannya, pendekatan pencahayaan dan sonar yang direncanakan aman dari sisi
 
 ```
 simple_pygame/
-├── main.py                  # titik masuk: python main.py [--seed N --floor N --difficulty X --debug --mute]
+├── main.py                  # titik masuk: python main.py [--seed N --floor N --difficulty X --dev --mute]
 ├── requirements.txt         # pygame-ce, numpy
 ├── README.md
 ├── docs/
@@ -158,7 +158,7 @@ simple_pygame/
 - [x] Struktur folder, `requirements.txt`, `.gitignore`, `main.py`
 - [x] `config.py` dengan konstanta, preset kesulitan, dan aturan per lantai
 - [x] `app.py`: jendela 960×540 `SCALED`, loop 60 FPS, pergantian scene, `F11`
-- [x] Argumen CLI: `--seed`, `--floor`, `--difficulty`, `--debug`, `--mute`
+- [x] Argumen CLI: `--seed`, `--floor`, `--difficulty`, `--dev`, `--mute`
 - [x] Test harness headless (`SDL_VIDEODRIVER=dummy`, `SDL_AUDIODRIVER=dummy`) + pytest
 
 **Selesai kalau:** `python main.py` membuka layar judul sementara, dan `pytest` hijau.
@@ -210,6 +210,8 @@ simple_pygame/
 **Selesai kalau:** satu run penuh sampai ending bisa diselesaikan (dicek pakai lompatan lantai debug), semua teks berbahasa Indonesia, dan tidak ada crash.
 
 ### M4 — Tuning
+- [x] Mode dev (`--dev`): kebal, sonar tanpa jeda, senter tanpa batas, bisa diubah dari judul dan menu jeda
+- [x] Umpan balik saat tertangkap: waktu berhenti, getar layar, makhluk yang menangkap terlihat, denyut merah
 - [ ] Kamu memainkan game dan mengisi checklist playtest (§7)
 - [ ] Angka-angka di `config.py` disetel dari masukanmu
 - [ ] Bug yang ditemukan diperbaiki
@@ -227,6 +229,7 @@ simple_pygame/
 
 **Alat bantu untuk kamu saat playtest:**
 - `F3`: overlay debug
+- `--dev`: menu mode dev (kebal, sonar tanpa jeda, senter tanpa batas) plus `F5`/`F6`
 - `python main.py --floor 4`: langsung ke Lantai 4
 - `--seed 123`: labirin yang sama setiap kali main, berguna untuk melaporkan bug
 - `--mute`: main tanpa suara

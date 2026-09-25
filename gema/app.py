@@ -7,6 +7,7 @@ import pygame
 
 from . import config as C
 from .audio.manager import Audio
+from .dev import DevSettings
 from .input import HumanController
 from .render.effects import Effects
 from .run import Run
@@ -19,7 +20,8 @@ def parse_args(argv=None):
     p.add_argument("--floor", type=int, default=1, choices=range(1, C.FINAL_FLOOR + 1),
                    help="mulai langsung dari lantai ini")
     p.add_argument("--difficulty", choices=[d.key for d in C.DIFFICULTIES], help="pilihan awal kesulitan")
-    p.add_argument("--debug", action="store_true", help="aktifkan tombol debug (F5 ambil fragmen, F6 ke pintu)")
+    p.add_argument("--dev", "--debug", dest="dev", action="store_true",
+                   help="mode dev: menu kebal/sonar tanpa jeda/senter tanpa batas, plus F5 dan F6")
     p.add_argument("--mute", action="store_true", help="main tanpa suara")
     return p.parse_args(argv)
 
@@ -39,7 +41,7 @@ class App:
         self.audio = Audio(enabled=not args.mute)
         self.effects = Effects()
         self.make_controller = HumanController
-        self.invulnerable = False
+        self.dev = DevSettings(enabled=args.dev)
         self.running = True
         self.scene = None
         self.go_title()

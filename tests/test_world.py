@@ -75,7 +75,8 @@ def test_listener_freezes_in_light_and_still_kills():
     assert (listener.x, listener.y) == (x, y)
     listener.x, listener.y = f.player.x + 5, f.player.y
     f.update(1 / 60, InputState(aim=aim, light=True))
-    assert f.dead and ("death",) in f.events
+    assert f.dead
+    assert [e for e in f.events if e[0] == "death"] == [("death", listener)]
 
 
 def test_exit_opens_after_all_fragments_and_goes_silent():
@@ -176,3 +177,41 @@ def test_respawn_moves_listeners_away():
     for listener in f.listeners:
         assert dist[tile_of(listener.x, listener.y)] >= C.LISTENER_RESPAWN_MIN_TILES
     assert f.stress.floor_min == C.STRESS_FLOOR_PER_DEATH
+
+
+def test_god_mode_reports_hits_without_dying():
+    f = make_floor()
+    f.dev.god = True
+    listener = f.listeners[0]
+    hits = 0
+    for _ in range(120):
+        listener.x, listener.y = f.player.x + 4, f.player.y
+        f.update(1 / 60, IDLE)
+        hits += sum(1 for e in f.events if e[0] == "hit")
+        assert not any(e[0] == "death" for e in f.events)
+        f.events.clear()
+    assert not f.dead
+    assert hits == 2  # sekali saat menyentuh, sekali lagi setelah jeda GOD_HIT_COOLDOWN
+
+
+def test_infinite_light_and_no_cooldown():
+    f = make_floor()
+    f.dev.infinite_light = True
+    f.dev.no_cooldown = True
+    pings = 0
+    for _ in range(120):
+        f.update(1 / 60, InputState(light=True, sonar=True))
+        pings += sum(1 for s in f.sfx if s[0] == "ping")
+        f.sfx.clear()
+    assert f.flashlight.battery == C.BATTERY_MAX
+    assert pings == 120
+
+
+def test_normal_mode_has_sonar_cooldown():
+    f = make_floor()
+    pings = 0
+    for _ in range(120):
+        f.update(1 / 60, InputState(sonar=True))
+        pings += sum(1 for s in f.sfx if s[0] == "ping")
+        f.sfx.clear()
+    assert pings == 1  # dua detik < jeda sonar Gelap (3 detik)

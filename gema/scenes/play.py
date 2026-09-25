@@ -9,8 +9,10 @@ from .. import config as C
 from .. import notes
 from ..audio.soundscape import Soundscape
 from ..render.draw import FloorRenderer
+from ..render.effects import Shake
 from ..render.text import TypeText, draw_center, draw_left, font, wrap
 from ..world.floor import Floor
+from .dev import DevMenu
 from .interlude import InterludeScene
 from .menu import Menu
 
@@ -24,7 +26,7 @@ class PlayScene:
         self.app = app
         self.run = run
         self.floor = Floor(run, C.floor_rules(run.floor, run.difficulty))
-        self.floor.invulnerable = app.invulnerable
+        self.floor.dev = app.dev
         self.renderer = FloorRenderer(self.floor)
         self.soundscape = Soundscape(app.audio)
         self.controller = app.make_controller()
@@ -32,13 +34,19 @@ class PlayScene:
         self.state = PLAYING
         self.timer = 0.0
         self.t = 0.0
-        self.thud_played = False
+        self.shake = Shake()
+        self.catcher = None      # makhluk yang menangkap (atau menyentuh, di mode kebal)
+        self.hit_flash = 0.0     # sisa waktu efek sentuhan di mode kebal
+        self.heartbeat_done = False
         self.paused = False
         self.showing_notes = False
-        self.pause_menu = Menu(["Lanjut", "Catatan", "Kembali ke judul"], y=190)
+        self.showing_dev = False
+        items = ["Lanjut", "Catatan"] + (["Mode dev"] if app.dev.enabled else []) + ["Kembali ke judul"]
+        self.pause_menu = Menu(items, y=190)
+        self.dev_menu = DevMenu(app.dev)
         self.note = None
         self.hint = 9.0 if run.floor == 1 else 0.0
-        self.debug = app.args.debug
+        self.debug = False
         p = self.floor.player
         self.cam = (p.x - C.SCREEN_W / 2, p.y - C.SCREEN_H / 2)
         app.save.record_floor(run.difficulty.key, min(run.floor, C.FLOOR_COUNT))
@@ -57,6 +65,7 @@ class PlayScene:
     def set_paused(self, paused):
         self.paused = paused
         self.showing_notes = False
+        self.showing_dev = False
         pygame.mouse.set_visible(paused)
         if paused:
             self.app.audio.pause()
@@ -73,7 +82,7 @@ class PlayScene:
                 return
             if ev.key == pygame.K_F3:
                 self.debug = not self.debug
-            if self.app.args.debug and self.state == PLAYING:
+            if self.app.dev.enabled and self.state == PLAYING:
                 if ev.key == pygame.K_F5:
                     self.floor.debug_collect_all()
                 elif ev.key == pygame.K_F6:
@@ -81,6 +90,10 @@ class PlayScene:
         self.controller.handle_event(ev)
 
     def _pause_event(self, ev):
+        if self.showing_dev:
+            if self.dev_menu.handle_event(ev):
+                self.showing_dev = False
+            return
         if self.showing_notes:
             done = ev.type == pygame.KEYDOWN and ev.key in (pygame.K_ESCAPE, pygame.K_RETURN, pygame.K_SPACE)
             if done or (ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1):
@@ -90,11 +103,16 @@ class PlayScene:
             self.set_paused(False)
             return
         choice = self.pause_menu.handle_event(ev)
-        if choice == 0:
+        if choice is None:
+            return
+        label = self.pause_menu.items[choice]
+        if label == "Lanjut":
             self.set_paused(False)
-        elif choice == 1:
+        elif label == "Catatan":
             self.showing_notes = True
-        elif choice == 2:
+        elif label == "Mode dev":
+            self.showing_dev = True
+        elif label == "Kembali ke judul":
             self.app.audio.unpause()
             self.app.go_title()
 
@@ -103,12 +121,16 @@ class PlayScene:
         if self.paused:
             return
         self.t += dt
+        self.shake.update(dt)
+        self.hit_flash = max(0.0, self.hit_flash - dt)
         if self.state == DYING:
+            # Waktu berhenti: dunia diam, layar bergetar, makhluk yang menangkap terlihat.
             self.timer += dt
-            if self.timer >= C.DEATH_FADE and not self.thud_played:
-                self.thud_played = True
-                self.app.audio.play("thud")
-            if self.timer >= C.DEATH_FADE + 1.1:
+            if self.timer >= C.LAST_HEARTBEAT and not self.heartbeat_done:
+                self.heartbeat_done = True
+                self.app.audio.beat(1.0)
+            self._update_camera()
+            if self.timer >= C.HIT_STOP + C.DEATH_FADE + C.DEATH_BLACK:
                 self._after_death()
             return
         if self.state == LEAVING:
@@ -124,7 +146,9 @@ class PlayScene:
                 self.note = TypeText(ev[1])
                 self.run.notes.append(ev[1])
             elif ev[0] == "death":
-                self._die()
+                self._die(ev[1])
+            elif ev[0] == "hit":
+                self._god_hit(ev[1])
             elif ev[0] == "exit":
                 self.state = LEAVING
                 self.timer = 0.0
@@ -147,14 +171,18 @@ class PlayScene:
             amp = (s - C.SWAY_STRESS) / (100 - C.SWAY_STRESS) * 3.0
             sx = math.sin(self.t * 0.9) * amp
             sy = math.cos(self.t * 0.7) * amp
-        self.cam = (p.x - C.SCREEN_W / 2 + sx, p.y - C.SCREEN_H / 2 + sy)
+        kx, ky = self.shake.offset()
+        self.cam = (p.x - C.SCREEN_W / 2 + sx + kx, p.y - C.SCREEN_H / 2 + sy + ky)
 
-    def _die(self):
+    def _die(self, catcher):
         self.state = DYING
         self.timer = 0.0
-        self.thud_played = False
+        self.catcher = catcher
+        self.heartbeat_done = False
         self.note = None
         self.soundscape.silence()
+        self.app.audio.play("impact")
+        self.shake.add(C.SHAKE_DEATH)
         self.run.lives -= 1
         self.run.deaths += 1
         self.app.save.kematian += 1
@@ -170,10 +198,19 @@ class PlayScene:
         self.floor.respawn()
         self.state = PLAYING
         self.t = 0.0
+        self.catcher = None
+        self.shake.trauma = 0.0
         app.switch(InterludeScene(
             app, [self.rng.choice(notes.DEATH_WORDS)], then=lambda: app.switch(self),
             duration=1.8, lives=run.lives, max_lives=run.difficulty.lives,
         ))
+
+    def _god_hit(self, catcher):
+        """Mode kebal: efek tertangkap tetap muncul supaya bisa dites, tapi tidak mati."""
+        self.catcher = catcher
+        self.hit_flash = 0.7
+        self.shake.add(C.SHAKE_GOD_HIT)
+        self.app.audio.play("impact", 0.5)
 
     def _leave(self):
         from .ending import EndingScene
@@ -189,10 +226,22 @@ class PlayScene:
     # --- gambar ------------------------------------------------------------
     def draw(self, screen):
         f = self.floor
-        self.renderer.draw(screen, self.cam[0], self.cam[1], self.t)
+        camx, camy = self.cam
+        self.renderer.draw(screen, camx, camy, self.t)
+        reveal = 0.0
+        if self.state == DYING:
+            reveal = 1.0
+        elif self.hit_flash > 0:
+            reveal = self.hit_flash / 0.7
+        if reveal > 0:
+            self.renderer.draw_catcher(screen, self.catcher, int(camx), int(camy), reveal)
         fx = self.app.effects
         fx.grain(screen, self.t)
         fx.vignette(screen, f.stress.value)
+        if self.state == DYING:
+            fx.red_pulse(screen, max(0.0, 1.0 - self.timer / (C.HIT_STOP + 0.3)) * 0.9)
+        elif self.hit_flash > 0:
+            fx.red_pulse(screen, self.hit_flash / 0.7 * 0.6)
 
         if self.note is not None:
             self.note.draw(screen, C.SCREEN_W / 2, C.SCREEN_H - 96)
@@ -204,11 +253,14 @@ class PlayScene:
 
         fade = max(0.0, 1.0 - self.t / 0.8)
         if self.state == DYING:
-            fade = min(1.0, self.timer / C.DEATH_FADE)
+            fade = max(0.0, min(1.0, (self.timer - C.HIT_STOP) / C.DEATH_FADE))
         elif self.state == LEAVING:
             fade = min(1.0, self.timer / C.EXIT_FADE)
         fx.fade(screen, fade)
 
+        if self.app.dev.any_active():
+            img = font(12).render(f"DEV · {self.app.dev.summary()}", True, (150, 140, 70))
+            screen.blit(img, (C.SCREEN_W - img.get_width() - 10, 8))
         if self.debug:
             self.renderer.draw_debug(screen, self.app.clock.get_fps())
         if self.paused:
@@ -229,6 +281,9 @@ class PlayScene:
         if self.showing_notes:
             self._draw_notes(screen)
             return
+        if self.showing_dev:
+            self.dev_menu.draw(screen)
+            return
         draw_center(screen, "Jeda", font(28), C.COL_TEXT, C.SCREEN_W / 2, 90)
         lives = self.run.lives
         max_lives = self.run.difficulty.lives
@@ -239,7 +294,7 @@ class PlayScene:
             pygame.draw.circle(screen, color, (int(x0 + i * gap), 146), 4 if i < lives else 3, 0 if i < lives else 1)
         self.pause_menu.draw(screen)
         fnt = font(13)
-        y = 350
+        y = 190 + len(self.pause_menu.items) * 42 + 30
         for key, what in notes.CONTROLS:
             draw_center(screen, f"{key}: {what}", fnt, C.COL_TEXT_DIM, C.SCREEN_W / 2, y)
             y += 18

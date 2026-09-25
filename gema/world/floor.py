@@ -5,6 +5,7 @@ import random
 
 from .. import config as C
 from .. import notes
+from ..dev import DevSettings
 from .director import Director
 from .flashlight import Flashlight
 from .items import Battery, Exit, Fragment
@@ -66,8 +67,9 @@ class Floor:
         self.silence_timer = 0.0
         self.taken = 0
         self.dead = False
-        self.invulnerable = False
-        self.events = []         # untuk scene: ("note", teks), ("death",), ("exit",), ("exit_open",)
+        self.dev = DevSettings()
+        self.hit_cooldown = 0.0
+        self.events = []         # untuk scene: ("note", teks), ("death", makhluk), ("hit", makhluk), ("exit",)
         self.sfx = []            # untuk audio: (nama, x, y); x None = suara dari pemain sendiri
         self.changed_tiles = []  # untuk renderer: petak yang berubah karena labirin bergeser
 
@@ -86,7 +88,12 @@ class Floor:
         p.update(dt, inp.move, inp.run, inp.aim, self.maze, self.noise, self.sfx)
 
         fl = self.flashlight
-        fl.update(dt, inp.light, p.x, p.y, p.aim, self.maze, self.diff.battery_drain, self.rng, self.sfx)
+        if self.dev.infinite_light:
+            fl.battery = C.BATTERY_MAX
+        if self.dev.no_cooldown:
+            self.sonar.cooldown = 0.0
+        drain = 0.0 if self.dev.infinite_light else self.diff.battery_drain
+        fl.update(dt, inp.light, p.x, p.y, p.aim, self.maze, drain, self.rng, self.sfx)
         if fl.on:
             self.last_light_time = self.time
 
@@ -103,10 +110,16 @@ class Floor:
         self._pickups()
         if self.dead:  # baru saja masuk pintu keluar
             return
-        if self._touching_monster() and not self.invulnerable:
-            self.dead = True
-            self.events.append(("death",))
-            return
+        self.hit_cooldown = max(0.0, self.hit_cooldown - dt)
+        catcher = self.touching_monster()
+        if catcher is not None:
+            if not self.dev.god:
+                self.dead = True
+                self.events.append(("death", catcher))
+                return
+            if self.hit_cooldown <= 0:
+                self.hit_cooldown = C.GOD_HIT_COOLDOWN
+                self.events.append(("hit", catcher))
 
         self._update_stress(dt)
         self.director.update(dt, self)
@@ -168,16 +181,17 @@ class Floor:
         self.events.append(("exit_open",))
 
     # --- bahaya ------------------------------------------------------------
-    def _touching_monster(self):
+    def touching_monster(self):
+        """Makhluk yang sedang menyentuh pemain, atau None."""
         p = self.player
         reach = C.PLAYER_RADIUS + C.LISTENER_RADIUS - 2
         for listener in self.listeners:
             if math.hypot(listener.x - p.x, listener.y - p.y) < reach:
-                return True
+                return listener
         w = self.watcher
         if w is not None and w.present and math.hypot(w.x - p.x, w.y - p.y) < 2 * C.PLAYER_RADIUS:
-            return True
-        return False
+            return w
+        return None
 
     def nearest_listener(self):
         p = self.player

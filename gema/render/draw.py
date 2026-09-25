@@ -6,7 +6,7 @@ import random
 import pygame
 
 from .. import config as C
-from .lighting import Lighting
+from .lighting import Lighting, radial_gradient
 from .text import draw_left, font
 
 
@@ -32,6 +32,8 @@ class FloorRenderer:
         self.view = pygame.Surface((C.SCREEN_W, C.SCREEN_H))
         self.echo = pygame.Surface((C.SCREEN_W, C.SCREEN_H))
         self.lighting = Lighting()
+        self.red_glow = radial_gradient(46, (150, 26, 22), power=1.4)
+        self.pale_glow = radial_gradient(46, (120, 118, 110), power=1.4)
 
     def _draw_tile(self, tx, ty):
         t = C.TILE
@@ -184,6 +186,25 @@ class FloorRenderer:
         if self._on_screen(x, y):
             k = 0.75 + 0.25 * math.sin(t * 2.0)
             screen.fill(scale(C.COL_EXIT, k), (x - 1, y - 11, 3, 22))
+
+    def draw_catcher(self, screen, entity, camx, camy, k):
+        """Makhluk yang menangkap pemain: terlihat sesaat, walau berada di kegelapan."""
+        if entity is None or k <= 0:
+            return
+        x, y = entity.x - camx, entity.y - camy
+        if hasattr(entity, "outline"):
+            glow = self.red_glow
+            screen.blit(glow, (x - glow.get_width() // 2, y - glow.get_height() // 2),
+                        special_flags=pygame.BLEND_ADD)
+            pts = entity.outline(camx, camy)
+            pygame.draw.polygon(screen, (4, 2, 2), pts)
+            pygame.draw.polygon(screen, scale(C.COL_LISTENER, k), pts, 2)
+        else:
+            glow = self.pale_glow
+            screen.blit(glow, (x - glow.get_width() // 2, y - glow.get_height() // 2),
+                        special_flags=pygame.BLEND_ADD)
+            self._figure(screen, x, y, entity.aim, k)
+        self._player(screen, camx, camy)
 
     def _player(self, screen, camx, camy):
         p = self.floor.player
