@@ -23,6 +23,7 @@ def parse_args(argv=None):
     p.add_argument("--dev", "--debug", dest="dev", action="store_true",
                    help="mode dev: menu kebal/sonar tanpa jeda/senter tanpa batas, plus F5 dan F6")
     p.add_argument("--mute", action="store_true", help="main tanpa suara")
+    p.add_argument("--selftest", action="store_true", help=argparse.SUPPRESS)
     return p.parse_args(argv)
 
 
@@ -96,4 +97,9 @@ class App:
 
 
 def main(argv=None):
-    App(parse_args(argv)).run()
+    args = parse_args(argv)
+    if args.selftest:
+        from .selftest import run as selftest
+
+        raise SystemExit(selftest(args))
+    App(args).run()

@@ -8,7 +8,24 @@ Kamu terbangun di labirin gelap dengan senter tua dan alat sonar. Sonar memperli
 
 Tidak ada file gambar atau suara sama sekali. Semua visual digambar dengan kode, dan semua suara dibuat dengan numpy.
 
-## Cara pasang
+## Main tanpa Python
+
+Versi siap main untuk **Windows**, **macOS**, dan **Linux** dibuat otomatis oleh GitHub setiap kali ada perubahan. Python tidak perlu dipasang.
+
+1. Unduh zip untuk sistem operasimu dari halaman [Releases](https://github.com/reinyako/simple_pygame/releases).
+2. Ekstrak, lalu buka `GEMA.exe` (Windows), `GEMA.app` (macOS), atau `GEMA` (Linux).
+3. Baca `BACA DULU.txt` di dalam zip kalau Windows atau macOS menampilkan peringatan. Peringatan itu muncul karena game ini belum punya tanda tangan digital.
+
+Mau membuat sendiri di komputermu? Jalankan ini di sistem operasi tujuan (file `.exe` harus dibuat di Windows):
+
+```bash
+pip install -r requirements.txt pyinstaller
+python tools/build.py
+```
+
+Hasilnya ada di folder `dist/`.
+
+## Cara pasang (dari kode)
 
 Butuh **Python 3.10 atau lebih baru**.
 

@@ -1,0 +1,80 @@
+name: Build
+
+# Membuat versi GEMA yang bisa dimainkan tanpa Python untuk Windows, macOS, dan Linux.
+# Setiap push: hasilnya bisa diunduh dari tab Actions (bagian Artifacts).
+# Push tag v* (misalnya v0.1.0): hasilnya juga dipasang di halaman Releases.
+
+on:
+  push:
+    branches: [main, "claude/**"]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      SDL_VIDEODRIVER: dummy
+      SDL_AUDIODRIVER: dummy
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-dev.txt
+      - run: pytest -q
+
+  build:
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      SDL_VIDEODRIVER: dummy
+      SDL_AUDIODRIVER: dummy
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt pyinstaller
+      - run: python tools/build.py
+
+      # Pastikan hasil build benar-benar bisa dibuka dan dimainkan beberapa detik.
+      - name: Self-test (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath "dist\GEMA.exe" -ArgumentList "--selftest" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "selftest gagal: $($p.ExitCode)" }
+      - name: Self-test (macOS)
+        if: runner.os == 'macOS'
+        run: dist/GEMA.app/Contents/MacOS/GEMA --selftest
+      - name: Self-test (Linux)
+        if: runner.os == 'Linux'
+        run: dist/GEMA --selftest
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GEMA-${{ runner.os }}
+          path: dist/GEMA-*.zip
+          if-no-files-found: error
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
+          generate_release_notes: true
